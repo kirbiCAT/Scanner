@@ -11,7 +11,8 @@ public class Main {
             //String processName = "Discord.exe";
                 while(true){
                     ProcessMonitor.Checker();
-                    //amend
+                    //amend 1.1
+                    //experiment
                 }
             }
         }
