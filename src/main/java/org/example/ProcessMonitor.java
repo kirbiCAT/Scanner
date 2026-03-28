@@ -12,42 +12,61 @@ import java.time.format.DateTimeFormatter;
 import static org.example.File.Wroter;
 
 public class ProcessMonitor {
-    //if app is still open
-    static void Checker() throws InterruptedException {
+
+    static Boolean Checker() throws InterruptedException {
         if(isProcessOpen()!=null){
             isProcessOpen();
-            //Scan apps open first app--> open json.file check if app exist else add app + actual time else increase time
-
+            return true;
         }else{
-            Thread.sleep(1000);
             System.out.println("KO");
         }
+        return false;
+
     }
+
+    public static Thread getThreadByName(String name) {
+        return Thread.getAllStackTraces()
+                .keySet()
+                .stream()
+                .filter(thread -> thread.getName().equals(name))
+                .findFirst()
+                .orElse(null); // Return null if thread not found
+    }
+
      public static String isProcessOpen() throws InterruptedException {
         try {
             Process process = Runtime.getRuntime().exec("tasklist");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
-            int value =0;
-            JSONArray APPLICATION = new JSONArray();
-            FileWriter file = new FileWriter("data.json");
+            String value ="Null";
             while ((line = reader.readLine()) != null) {
                     if(line.contains(".exe")){
                         line = line.substring(0, line.indexOf(" "));
-                        JSONObject obj = new JSONObject();
-                        JSONObject APP = new JSONObject();
-                        APP.put(line,value);
-                        APPLICATION.add(APP);
-                        obj.put("software", APPLICATION);
-                        Wroter(obj);
-                        System.out.println(obj);
-                        Thread.sleep(1000);
-                        value +=1;
+
+                        if(File.ScanIfAppPresent(File.readJSON("data.json"),line)){
+                            //get app threadTimer
+                            Thread thread = getThreadByName(line);
+                            //thread.UpdateTime
+
+
+
+                            //MyRunnable.UpdateTime(line);
+                            //call current "line" tread update tim
+
+                        }else{
+                            File.FileWriter(line,value);
+                            //start new thread for monitoring
+                            Thread thread = new Thread(new MyRunnable("nice"));
+                            thread.start();
+                        }
+
                     }
         }
         return null;
     } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
-    }
+     }
 }
