@@ -45,18 +45,12 @@ public class ProcessMonitor {
 
                         if(File.ScanIfAppPresent(File.readJSON("data.json"),line)){
                             //get app threadTimer
-                            Thread thread = getThreadByName(line);
-                            //thread.UpdateTime
-
-
-
-                            //MyRunnable.UpdateTime(line);
-                            //call current "line" tread update tim
+                            Thread CurrentThread = getThreadByName(line);
 
                         }else{
                             File.FileWriter(line,value);
                             //start new thread for monitoring
-                            Thread thread = new Thread(new MyRunnable("nice"));
+                            Thread thread = new Thread(new MyRunnable(line));
                             thread.start();
                         }
 

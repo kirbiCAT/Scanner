@@ -11,4 +11,14 @@ public class Time {
         Instant end = Instant.now();
         Duration timeElapsed = Duration.between(start, end);
     }
+
+    public void StartTimer(){
+
+    }
+    public static void UpdateTime(String ThreadAppName){
+        //get current app time
+        //open file
+        //set new time
+
+    }
 }
