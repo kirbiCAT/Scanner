@@ -1,24 +1,25 @@
 package org.example;
 
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 
 public class Time {
 
-    public static void minutes(){
+    public static String CurrentTime() throws InterruptedException {
+
         Instant start = Instant.now();
-        // time passes
+        Thread.sleep(1000);
         Instant end = Instant.now();
-        Duration timeElapsed = Duration.between(start, end);
+        Duration currentTimeElapsed = Duration.between(start, end);
+        return String.valueOf(currentTimeElapsed);
     }
 
-    public void StartTimer(){
 
-    }
-    public static void UpdateTime(String ThreadAppName){
-        //get current app time
-        //open file
-        //set new time
+    public static void UpdateTime(String ThreadAppName,String newValue) throws IOException, ParseException {
+        File.UpdateJsonArray(File.readJSON("data.json"),ThreadAppName,newValue);
 
     }
 }

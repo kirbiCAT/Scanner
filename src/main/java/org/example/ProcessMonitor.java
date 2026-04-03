@@ -6,22 +6,14 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Set;
 //import static org.example.File.FileReader;
-import static org.example.File.Wroter;
+
 
 public class ProcessMonitor {
-
-    static Boolean Checker() throws InterruptedException {
-        if(isProcessOpen()!=null){
-            isProcessOpen();
+static Boolean Checker() throws InterruptedException {
+            OpenProcess();
             return true;
-        }else{
-            System.out.println("KO");
-        }
-        return false;
-
     }
 
     public static Thread getThreadByName(String name) {
@@ -32,29 +24,48 @@ public class ProcessMonitor {
                 .findFirst()
                 .orElse(null); // Return null if thread not found
     }
-
-     public static String isProcessOpen() throws InterruptedException {
+// {"software":[{"smss.exe":0},{"csrss.exe":1},{"wininit.exe":2}]}
+     public static String OpenProcess() throws InterruptedException {
         try {
             Process process = Runtime.getRuntime().exec("tasklist");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
-            String value ="Null";
             while ((line = reader.readLine()) != null) {
                     if(line.contains(".exe")){
+                        Thread.sleep(1000);
                         line = line.substring(0, line.indexOf(" "));
 
-                        if(File.ScanIfAppPresent(File.readJSON("data.json"),line)){
-                            //get app threadTimer
-                            Thread CurrentThread = getThreadByName(line);
+                        if(!File.ScanIfAppPresentInFile(File.readJSON("data.json"), line)){
+                            //System.out.println("Not found");
+                            JSONObject jsonObject = File.readJSON("data.json");
+                            JSONObject org = (JSONObject) jsonObject;
+                            JSONArray deps = (JSONArray) org.get("software");
+
+                            JSONObject APP = new JSONObject();
+                            APP.put(line," ");
+                            deps.add(APP);
+                            File.Wroter(jsonObject);
+
 
                         }else{
-                            File.FileWriter(line,value);
-                            //start new thread for monitoring
-                            Thread thread = new Thread(new MyRunnable(line));
-                            thread.start();
+                            //System.out.println("Exist");
+                        }
+                        //check if app is register and MonitorThread running
+                        Thread CurrentThread = getThreadByName(line);
+                        if(CurrentThread==null){
+                            Thread Newthread = new Thread(new MyRunnable(line));
+                            Newthread.start();
+                            //GET ALL CURRENTLY RUNNING THREADS
+//                            Set<Thread> threads = Thread.getAllStackTraces().keySet();
+//                            System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "Name", "State", "Priority", "isDaemon");
+//                            for (Thread t : threads) {
+//                                System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
+//                            }
                         }
 
+
                     }
+
         }
         return null;
     } catch (IOException e) {
