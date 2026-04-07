@@ -10,10 +10,10 @@ public class Main {
 
             public static void main (String[]args) throws InterruptedException, IOException, ParseException {
 
-                //Time.UpdateTime("smss.exe", String.valueOf(2));
-//                File.UpdateJsonArray(File.readJSON("data.json"),"smss.exe",String.valueOf(2));
+
+
                 while(true){
-                    ProcessMonitor.Checker();
+                    ProcessMonitor.OpenProcess();
                 }
 //            }
 

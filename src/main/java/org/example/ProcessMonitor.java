@@ -15,7 +15,6 @@ static Boolean Checker() throws InterruptedException {
             OpenProcess();
             return true;
     }
-
     public static Thread getThreadByName(String name) {
         return Thread.getAllStackTraces()
                 .keySet()
@@ -30,9 +29,10 @@ static Boolean Checker() throws InterruptedException {
             Process process = Runtime.getRuntime().exec("tasklist");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
+
             while ((line = reader.readLine()) != null) {
                     if(line.contains(".exe")){
-                        Thread.sleep(1000);
+                        //Thread.sleep(1000);
                         line = line.substring(0, line.indexOf(" "));
 
                         if(!File.ScanIfAppPresentInFile(File.readJSON("data.json"), line)){
@@ -42,7 +42,7 @@ static Boolean Checker() throws InterruptedException {
                             JSONArray deps = (JSONArray) org.get("software");
 
                             JSONObject APP = new JSONObject();
-                            APP.put(line," ");
+                            APP.put(line,"0");
                             deps.add(APP);
                             File.Wroter(jsonObject);
 
@@ -55,19 +55,17 @@ static Boolean Checker() throws InterruptedException {
                         if(CurrentThread==null){
                             Thread Newthread = new Thread(new MyRunnable(line));
                             Newthread.start();
-                            //GET ALL CURRENTLY RUNNING THREADS
-//                            Set<Thread> threads = Thread.getAllStackTraces().keySet();
-//                            System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "Name", "State", "Priority", "isDaemon");
-//                            for (Thread t : threads) {
-//                                System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
-//                            }
+
+
                         }
 
 
                     }
 
         }
+            //Checker();
         return null;
+
     } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ParseException e) {

@@ -12,33 +12,7 @@ import org.json.simple.parser.ParseException;
 
 public class File {
 
-//    public static void FileWriter(String line,String time) throws IOException {
-//        Path filePath = Paths.get("data.json");
-//        FileWriter file = new FileWriter("data.json");
-//
-//        JSONObject MainObj = new JSONObject();
-//
-//        if (Files.exists(filePath)) {
-//            try {
-//                JSONObject APP = new JSONObject();
-//                JSONArray APPLICATION = new JSONArray();
-//
-//                APP.put(line,time);
-//                APPLICATION.add(APP);
-//                MainObj.put("software", APPLICATION);
-//
-//                Wroter(MainObj);
-//
-//                System.out.println(MainObj);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            System.out.println("The file does not exist.");
-//        }
-//    }
-
-    public static void Wroter(JSONObject APPLICATION) throws IOException {
+    public static synchronized void Wroter(JSONObject APPLICATION) throws IOException {
         FileWriter file = new FileWriter("data.json");
         file.write(APPLICATION.toJSONString());
         file.flush();
@@ -46,7 +20,7 @@ public class File {
     }
 
 
-    public static JSONObject readJSON(String filename) throws IOException, ParseException {
+    public static synchronized JSONObject readJSON(String filename) throws IOException, ParseException {
         JSONParser parser = new JSONParser();
         Reader reader;
 
@@ -65,14 +39,9 @@ public class File {
 
     //UpdateJsonArray(readJSON("data.json"));
 
-    public static void AddJsonObject(JSONObject jsonObject,String currentApp,String NewValue){
-        JSONArray deps = (JSONArray) jsonObject.put(currentApp,NewValue);
-    }
 
 
-
-
-    public static void UpdateJsonArray(JSONObject jsonObject,String currentApp,String NewValue) throws IOException{
+    public static synchronized void UpdateJsonArray(JSONObject jsonObject,String currentApp,String NewValue) throws IOException{
         JSONArray deps = (JSONArray) ((JSONObject) jsonObject).get("software");
         System.out.println("running");
         for (Object dep : deps) {
@@ -84,7 +53,7 @@ public class File {
         Wroter(jsonObject);
     }
 
-    public static boolean ScanIfAppPresentInFile(JSONObject jsonObject,String currentApp) throws IOException{
+    public static synchronized boolean ScanIfAppPresentInFile(JSONObject jsonObject,String currentApp) throws IOException{
         JSONArray deps = (JSONArray) ((JSONObject) jsonObject).get("software");
 
         for (Object dep : deps) {
@@ -97,13 +66,13 @@ public class File {
     }
 
 
-    public static JSONObject ReturnAppValue(JSONObject jsonObject, String currentApp) throws IOException{
+    public static Object ReturnAppValue(JSONObject jsonObject, String currentApp) throws IOException{
         JSONArray deps = (JSONArray) ((JSONObject) jsonObject).get("software");
-
         for (Object dep : deps) {
             JSONObject d = (JSONObject) dep;
             if(d.containsKey(currentApp)) {
-                return d;
+
+                return d.get(currentApp);
             }
         }
         return null;
