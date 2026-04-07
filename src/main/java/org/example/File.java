@@ -78,9 +78,13 @@ public class File {
         return null;
     }
 
+//proto
 
-
-
+    public static synchronized JSONArray ReturnArray(JSONObject jsonObject,String currentApp) throws IOException{
+        JSONArray deps = (JSONArray) ((JSONObject) jsonObject).get("software");
+        
+        return deps;
+    }
 
 
 }
